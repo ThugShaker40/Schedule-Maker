@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editable Daily Schedule</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .tutorial {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 14px;
+      background: #f0f8ff;
+      padding: 10px;
+      border-radius: 6px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 12px;
+      text-align: center;
+      position: relative;
+    }
+    th {
+      background-color: #f0f0f0;
+    }
+    td[contenteditable] {
+      background-color: #eef6fb;
+      cursor: text;
+    }
+    td.time-editable {
+      background-color: #ffefd5;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .remove-row {
+      color: red;
+      cursor: pointer;
+      font-weight: bold;
+      margin-left: 5px;
+    }
+    @media print {
+      .remove-row {
+        display: none !important;
+      }
+    }
+    .icon-container {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      z-index: 10;
+      max-width: 100%;
+      overflow-x: auto;
+      pointer-events: none;
+    }
+    .static-icon {
+      font-size: 16px;
+      pointer-events: auto;
+      cursor: pointer;
+    }
+    .button-bar {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .button-bar button {
+      margin: 0 10px;
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .toolbox {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+    .icon-box, .color-box {
+      border: 2px solid black;
+      padding: 10px;
+      width: 300px;
+    }
+    .draggable-icon {
+      font-size: 24px;
+      cursor: grab;
+      margin: 5px;
+    }
+    .color-swatch {
+      width: 30px;
+      height: 30px;
+      border: 1px solid #888;
+      cursor: grab;
+      display: inline-block;
+      margin: 3px;
+    }
+    .add-color {
+      width: 30px;
+      height: 30px;
+      background-color: #aaa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: bold;
+      margin: 3px;
+    }
+  </style>
+</head>
+<body>
+<h1>Daily Schedule</h1>
+  <div style="text-align:center; max-width:700px; margin: 10px auto; font-size: 14px; color: #555;">
+    <p><strong>How to use:</strong></p>
+    <ul style="list-style: none; padding: 0; text-align: left; display: inline-block;">
+      <li>📝 Click inside any text box to type in your notes or schedule items.</li>
+      <li>⏰ Click the hour on the left to edit or change the time.</li>
+      <li>🎯 To add an icon, drag one from below and drop it into any cell.</li>
+      <li>❌ Click an icon inside a cell to remove it.</li>
+      <li>🎨 Drag a color swatch below and drop it into any cell to apply the background color.</li>
+      <li>🔄 Right-click a colored cell to remove the background color.</li>
+    </ul>
+  </div>
+<div class="button-bar">
+  <button onclick="printSchedule()">🖨️ Print</button>
+  <button onclick="downloadPDF()">📄 Save as PDF</button>
+  <button onclick="saveAsImage()">🖼️ Save as Image</button>
+  <button onclick="clearAll()">🧽 Clear All</button>
+  <button onclick="clearColors()">🎨 Clear Colors</button>
+  <button onclick="addRow()">➕ Add Row</button>
+</div>
+
+<div id="pdf-container">
+  <table id="schedule-table">
+    <thead>
+      <tr>
+        <th>Time</th>
+        <th>Monday</th>
+        <th>Tuesday</th>
+        <th>Wednesday</th>
+        <th>Thursday</th>
+        <th>Friday</th>
+        <th>Saturday</th>
+        <th>Sunday</th>
+      </tr>
+    </thead>
+    <tbody id="schedule-body"></tbody>
+  </table>
+</div>
+
+<div class="toolbox">
+  <div class="icon-box">
+    <strong>Icons</strong><br>
+    <i class="fa fa-cloud draggable-icon" id="icon1" draggable="true"></i>
+    <i class="fa fa-heart draggable-icon" id="icon2" draggable="true"></i>
+    <i class="fa fa-car draggable-icon" id="icon3" draggable="true"></i>
+    <i class="fa fa-star draggable-icon" id="icon4" draggable="true"></i>
+    <i class="fa fa-book draggable-icon" id="icon5" draggable="true"></i>
+    <i class="fa fa-music draggable-icon" id="icon6" draggable="true"></i>
+    <i class="fa fa-plane draggable-icon" id="icon7" draggable="true"></i>
+    <i class="fa fa-cutlery draggable-icon" id="icon8" draggable="true"></i>
+    <i class="fa fa-shopping-cart draggable-icon" id="icon9" draggable="true"></i>
+    <i class="fa fa-lightbulb-o draggable-icon" id="icon10" draggable="true"></i>
+    <i class="fa fa-clock-o draggable-icon" id="icon11" draggable="true"></i>
+    <i class="fa fa-graduation-cap draggable-icon" id="icon12" draggable="true"></i>
+    <i class="fa fa-coffee draggable-icon" id="icon13" draggable="true"></i>
+    <i class="fa fa-tree draggable-icon" id="icon14" draggable="true"></i>
+    <i class="fa fa-smile-o draggable-icon" id="icon15" draggable="true"></i>
+    <i class="fa fa-pencil draggable-icon" id="icon16" draggable="true"></i>
+    <i class="fa fa-rocket draggable-icon" id="icon17" draggable="true"></i>
+    <i class="fa fa-laptop draggable-icon" id="icon18" draggable="true"></i>
+    <i class="fa fa-bug draggable-icon" id="icon19" draggable="true"></i>
+    <i class="fa fa-futbol-o draggable-icon" id="icon20" draggable="true"></i>
+  </div>
+
+  <div class="color-box">
+    <strong>Colors</strong><br>
+    <div class="color-swatch" style="background:red" id="color1" draggable="true"></div>
+    <div class="color-swatch" style="background:blue" id="color2" draggable="true"></div>
+    <div class="color-swatch" style="background:green" id="color3" draggable="true"></div>
+    <div class="color-swatch" style="background:orange" id="color4" draggable="true"></div>
+    <div class="color-swatch" style="background:purple" id="color5" draggable="true"></div>
+    <div class="color-swatch" style="background:yellow" id="color6" draggable="true"></div>
+    <div class="color-swatch" style="background:pink" id="color7" draggable="true"></div>
+    <div class="color-swatch" style="background:teal" id="color8" draggable="true"></div>
+    <div class="color-swatch" style="background:salmon" id="color9" draggable="true"></div>
+    <div class="color-swatch" style="background:gray" id="color10" draggable="true"></div>
+    <div class="color-swatch" style="background:gold" id="color11" draggable="true"></div>
+    <div class="color-swatch" style="background:lime" id="color12" draggable="true"></div>
+    <div class="color-swatch" style="background:brown" id="color13" draggable="true"></div>
+    <div class="color-swatch" style="background:lightblue" id="color14" draggable="true"></div>
+    <div class="color-swatch" style="background:plum" id="color15" draggable="true"></div>
+    <div class="color-swatch" style="background:navy" id="color16" draggable="true"></div>
+    <div class="color-swatch" style="background:skyblue" id="color17" draggable="true"></div>
+    <div class="color-swatch" style="background:aqua" id="color18" draggable="true"></div>
+    <div class="color-swatch" style="background:chocolate" id="color19" draggable="true"></div>
+    <div class="color-swatch" style="background:indigo" id="color20" draggable="true"></div>
+    <div class="add-color" onclick="openColorPicker()">+</div>
+    <input type="color" id="colorPicker" style="display: none" onchange="addCustomColor(this.value)">
+  </div>
+</div>
+<script>
+  const scheduleBody = document.getElementById('schedule-body');
+  const initialTimes = ['8:00 am','9:00 am','10:00 am','11:00 am','12:00 pm','1:00 pm','2:00 pm','3:00 pm','4:00 pm','5:00 pm','6:00 pm'];
+
+  function createRow(label) {
+    const row = document.createElement('tr');
+    const timeCell = document.createElement('td');
+    timeCell.contentEditable = true;
+    timeCell.textContent = label;
+    timeCell.classList.add('time-editable');
+
+    const removeBtn = document.createElement('span');
+    removeBtn.textContent = '❌';
+    removeBtn.className = 'remove-row';
+    removeBtn.onclick = () => row.remove();
+    timeCell.appendChild(removeBtn);
+    row.appendChild(timeCell);
+
+    for (let i = 0; i < 7; i++) {
+      const cell = document.createElement('td');
+      const textArea = document.createElement('div');
+      textArea.contentEditable = true;
+      textArea.style.minHeight = '30px';
+      cell.appendChild(textArea);
+      cell.style.position = 'relative';
+
+      const iconContainer = document.createElement('div');
+      iconContainer.classList.add('icon-container');
+      cell.appendChild(iconContainer);
+
+      cell.ondragover = e => e.preventDefault();
+      cell.ondrop = e => {
+        e.preventDefault();
+        const id = e.dataTransfer.getData('text');
+        const dragged = document.getElementById(id);
+        if (!dragged) return;
+        if (dragged.classList.contains('draggable-icon')) {
+          const icon = dragged.cloneNode(true);
+          icon.classList.remove('draggable-icon');
+          icon.removeAttribute('draggable');
+          icon.classList.add('static-icon');
+          icon.title = 'Click to remove';
+          icon.onclick = () => icon.remove();
+          iconContainer.appendChild(icon);
+        } else if (dragged.classList.contains('color-swatch')) {
+          cell.style.backgroundColor = dragged.style.backgroundColor;
+        }
+      };
+
+      cell.addEventListener('contextmenu', e => {
+        if (e.target === cell) {
+          e.preventDefault();
+          cell.style.backgroundColor = '';
+        }
+      });
+
+      row.appendChild(cell);
+    }
+    scheduleBody.appendChild(row);
+  }
+
+  initialTimes.forEach(createRow);
+
+  function addRow() {
+    createRow('New');
+  }
+
+  function clearAll() {
+    document.querySelectorAll('#schedule-table td').forEach(cell => {
+      if (!cell.classList.contains('time-editable')) {
+        const textArea = cell.querySelector('div[contenteditable]');
+        const iconContainer = cell.querySelector('.icon-container');
+        if (textArea) textArea.innerHTML = '';
+        if (iconContainer) iconContainer.innerHTML = '';
+        cell.style.backgroundColor = '';
+      }
+    });
+  }
+
+  function clearColors() {
+    document.querySelectorAll('#schedule-table td').forEach(cell => {
+      cell.style.backgroundColor = '';
+    });
+  }
+
+  document.querySelectorAll('.draggable-icon, .color-swatch').forEach(el => {
+    el.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text', e.target.id);
+    });
+  });
+
+  function printSchedule() {
+    document.querySelectorAll('.remove-row').forEach(btn => btn.style.display = 'none');
+    window.print();
+    setTimeout(() => {
+      document.querySelectorAll('.remove-row').forEach(btn => btn.style.display = 'inline');
+    }, 500);
+  }
+
+  async function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    document.querySelectorAll('.remove-row').forEach(btn => btn.style.display = 'none');
+    const container = document.getElementById('pdf-container');
+    const canvas = await html2canvas(container, { scale: 2 });
+    document.querySelectorAll('.remove-row').forEach(btn => btn.style.display = 'inline');
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jsPDF('l', 'mm', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const imgHeight = (canvas.height * pageWidth) / canvas.width;
+    pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, imgHeight);
+    pdf.save('schedule.pdf');
+  }
+
+  async function saveAsImage() {
+    document.querySelectorAll('.remove-row').forEach(btn => btn.style.display = 'none');
+    const container = document.getElementById('pdf-container');
+    const canvas = await html2canvas(container, { scale: 2 });
+    document.querySelectorAll('.remove-row').forEach(btn => btn.style.display = 'inline');
+    const link = document.createElement('a');
+    link.download = 'schedule.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }
+  function openColorPicker() {
+  document.getElementById('colorPicker').click();
+}
+
+let customColorCount = 100;
+
+function addCustomColor(color) {
+  const swatch = document.createElement('div');
+  swatch.className = 'color-swatch';
+  swatch.style.backgroundColor = color;
+  swatch.id = 'color' + customColorCount++;
+  swatch.draggable = true;
+  swatch.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('text', swatch.id);
+  });
+  document.querySelector('.color-box').insertBefore(swatch, document.querySelector('.add-color'));
+}
+
+</script>
+</body>
+</html>
