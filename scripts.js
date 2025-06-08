@@ -148,3 +148,12 @@ function toggleDropdown(event) {
 document.addEventListener('click', () => {
   document.querySelectorAll('.creator-dropdown.open').forEach(drop => drop.classList.remove('open'));
 });
+function showTutorial(type) {
+  const isDesktop = type === 'desktop';
+
+  document.getElementById('tutorial-desktop').style.display = isDesktop ? 'block' : 'none';
+  document.getElementById('tutorial-phone').style.display = isDesktop ? 'none' : 'block';
+
+  document.getElementById('tab-desktop').classList.toggle('active-tab', isDesktop);
+  document.getElementById('tab-phone').classList.toggle('active-tab', !isDesktop);
+}
