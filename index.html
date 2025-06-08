@@ -5,9 +5,111 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Editable Daily Schedule</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
+@media (max-width: 768px) {
+  .logo-title-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+  }
+
+  .logo-title-wrapper .logo {
+    width: 60px;
+    margin-bottom: 4px;
+  }
+
+  .logo-title-wrapper h1 {
+    font-size: 20px;
+  }
+
+
+  .button-bar {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .button-bar button {
+    width: 100%;
+    margin: 5px 0;
+  }
+
+  .toolbox {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  table {
+    font-size: 12px;
+  }
+
+  th, td {
+    padding: 6px;
+  }
+
+  .creator-dropdown .dropdown-content {
+    position: relative;
+    top: 6px;
+  }
+}
+
+.title-font {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 700;
+  font-size: 32px;
+  letter-spacing: 0.5px;
+}
+
+.logo-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 10;
+}
+
+.logo {
+  width: 80px;
+  height: auto;
+}
+
+.creator-dropdown {
+  position: relative;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  top: 24px;
+  left: 0;
+  background-color: var(--bg);
+  border: 1px solid var(--border);
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow: 0 0 6px rgba(0,0,0,0.2);
+  z-index: 100;
+}
+
+.dropdown-content a {
+  display: block;
+  color: var(--text);
+  text-decoration: none;
+  margin: 4px 0;
+}
+
+.creator-dropdown.open .dropdown-content {
+  display: block;
+}
+
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
@@ -123,8 +225,20 @@
     }
   </style>
 </head>
+<div class="logo-title-wrapper">
+  <img src="schedulaicon.png" alt="schedulaicon" class="logo">
+
+  <div class="creator-dropdown" onclick="toggleDropdown(event)">
+    <span class="creator-label">by <strong>Kemal Haris</strong> ▼</span>
+    <div class="dropdown-content">
+      <a href="https://www.instagram.com/ghurabahris/" target="_blank">Instagram</a>
+      <a href="https://github.com/ThugShaker40" target="_blank">GitHub</a>
+    </div>
+  </div>
+</div>
+<div id="google_translate_element" style="position:absolute; top:20px; right:20px; z-index:999;"></div>
 <body>
-<h1>Daily Schedule</h1>
+<h1 class="title-font">Simple Schedule Maker</h1>
   <div style="text-align:center; max-width:700px; margin: 10px auto; font-size: 14px; color: #555;">
     <p><strong>How to use:</strong></p>
     <ul style="list-style: none; padding: 0; text-align: left; display: inline-block;">
@@ -141,7 +255,7 @@
   <button onclick="downloadPDF()">📄 Save as PDF</button>
   <button onclick="saveAsImage()">🖼️ Save as Image</button>
   <button onclick="clearAll()">🧽 Clear All</button>
-  <button onclick="clearColors()">🎨 Clear Colors</button>
+  <button onclick="clearColors()">🎨 Remove Colors</button>
   <button onclick="addRow()">➕ Add Row</button>
 </div>
 
@@ -337,6 +451,7 @@
     link.href = canvas.toDataURL('image/png');
     link.click();
   }
+
   function openColorPicker() {
   document.getElementById('colorPicker').click();
 }
@@ -355,6 +470,28 @@ function addCustomColor(color) {
   document.querySelector('.color-box').insertBefore(swatch, document.querySelector('.add-color'));
 }
 
+function toggleDropdown(event) {
+  event.stopPropagation();
+  const dropdown = event.currentTarget;
+  dropdown.classList.toggle('open');
+}
+
+// Close dropdown if clicking outside
+document.addEventListener('click', () => {
+  document.querySelectorAll('.creator-dropdown.open').forEach(drop => drop.classList.remove('open'));
+});
 </script>
+<script type="text/javascript">
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement(
+      {
+        pageLanguage: 'en',
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      },
+      'google_translate_element'
+    );
+  }
+</script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
