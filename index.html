@@ -23,18 +23,31 @@
 </div>
 <div id="google_translate_element" style="position:absolute; top:20px; right:20px; z-index:999;"></div>
 <body>
-<h1 class="title-font">Schedula: Simple Schedule Maker</h1>
-  <div style="text-align:center; max-width:700px; margin: 10px auto; font-size: 14px; color: #555;">
-    <p><strong>How to use:</strong></p>
-    <ul style="list-style: none; padding: 0; text-align: left; display: inline-block;">
-      <li>📝 Click inside any text box to type in your notes or schedule items.</li>
-      <li>⏰ Click the hour on the left to edit or change the time.</li>
-      <li>🎯 To add an icon, drag one from below and drop it into any cell.</li>
-      <li>❌ Click an icon inside a cell to remove it.</li>
-      <li>🎨 Drag a color swatch below and drop it into any cell to apply the background color.</li>
-      <li>🔄 Right-click a colored cell to remove the background color.</li>
-    </ul>
-  </div>
+<h1 class="title-font notranslate">Schedula: Simple Schedule Maker</h1>
+<h2 style="text-align: center;">How to use</h2>
+<div class="tutorial-tabs">
+  <button onclick="showTutorial('desktop')" id="tab-desktop" class="active-tab">On Desktop</button>
+  <button onclick="showTutorial('phone')" id="tab-phone">On Handphone</button>
+</div>
+<div id="tutorial-desktop" class="tutorial-content">
+  <ul>
+    <li>🖱️ Click inside any text box to type in your notes or schedule items.</li>
+    <li>🕒 Click the hour on the left to edit or change the time.</li>
+    <li>🚗 To add an icon, drag one from below and drop it into any cell.</li>
+    <li>❌ Click an icon inside a cell to remove it.</li>
+    <li>🎨 Drag a color swatch into any cell to apply it.</li>
+    <li>🧽 Right-click a colored cell to remove the background color.</li>
+  </ul>
+</div>
+<div id="tutorial-phone" class="tutorial-content" style="display: none;">
+  <ul>
+    <li>📱 Tap any text box to type your notes.</li>
+    <li>🕒 Tap the hour to edit the time.</li>
+    <li>🎯 Tap and hold icons/colors, then drag into a cell.</li>
+    <li>❌ Tap icons in a cell to remove them.</li>
+    <li>🧽 Long-press a colored cell to clear it.</li>
+  </ul>
+</div>
 <p class="feedback-message">
   💬 Have feedback? <a href="https://forms.gle/fYZi2F7aY57LLG5y7" target="_blank">Send it here</a>.
 </p>
