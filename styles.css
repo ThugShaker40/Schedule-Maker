@@ -222,3 +222,29 @@
         color: #007BFF;
         text-decoration: underline;
     }
+    .tutorial-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.tutorial-tabs button {
+  padding: 8px 16px;
+  border: 1px solid #888;
+  background: #ddd;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.tutorial-tabs .active-tab {
+  background: #aaa;
+}
+
+.tutorial-content {
+  border: 1px solid #888;
+  padding: 15px;
+  max-width: 600px;
+  margin: auto;
+  background: #f9f9f9;
+  font-size: 14px;
+}
