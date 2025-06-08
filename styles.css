@@ -212,3 +212,13 @@
       font-weight: bold;
       margin: 3px;
     }
+    .feedback-message {
+        text-align: center;
+        font-size: 14px;
+        margin-top: 30px;
+        color: var(--text);
+    }
+    .feedback-message a {
+        color: #007BFF;
+        text-decoration: underline;
+    }
