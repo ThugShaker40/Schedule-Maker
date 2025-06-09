@@ -74,6 +74,8 @@
         cell.style.backgroundColor = '';
       }
     });
+      pastInputs.clear();
+      localStorage.removeItem('schedulaHistory');
   }
 
   function clearColors() {
@@ -157,3 +159,109 @@ function showTutorial(type) {
   document.getElementById('tab-desktop').classList.toggle('active-tab', isDesktop);
   document.getElementById('tab-phone').classList.toggle('active-tab', !isDesktop);
 }
+
+let pastInputs = new Set(JSON.parse(localStorage.getItem('schedulaHistory') || '[]'));
+const autocompleteBox = document.getElementById('autocomplete-box');
+let currentTarget = null;
+let activeIndex = -1;
+
+// Watch all contenteditable divs for input
+document.addEventListener('input', function (e) {
+  const target = e.target;
+  if (!target.isContentEditable) return;
+
+  currentTarget = target;
+  const text = target.textContent.trim();
+
+  if (text.length >= 2) {
+    const matches = [...pastInputs].filter(item =>
+      item.toLowerCase().startsWith(text.toLowerCase())
+    );
+    showAutocomplete(matches, target);
+  } else {
+    autocompleteBox.style.display = 'none';
+  }
+});
+
+// Blur: store value and hide box
+document.addEventListener('blur', function (e) {
+  const target = e.target;
+  if (!target.isContentEditable) return;
+  const text = target.textContent.trim();
+  if (text) {
+    const words = text.split(/\\s+/); // split by spaces // 
+    words.forEach(word => {
+    if (word.length > 1) pastInputs.add(word);
+  });
+  pastInputs.add(text); // also store the full phrase
+  localStorage.setItem('schedulaHistory', JSON.stringify([...pastInputs]));
+}
+  setTimeout(() => autocompleteBox.style.display = 'none', 150);
+}, true);
+
+// Keyboard navigation (↑ ↓ Tab Enter Esc)
+document.addEventListener('keydown', function (e) {
+  if (!autocompleteBox || autocompleteBox.style.display === 'none') return;
+  const items = autocompleteBox.querySelectorAll('li');
+  if (!items.length) return;
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    activeIndex = (activeIndex + 1) % items.length;
+    updateActiveItem(items);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    activeIndex = (activeIndex - 1 + items.length) % items.length;
+    updateActiveItem(items);
+  } else if (e.key === 'Enter' || e.key === 'Tab') {
+    if (activeIndex >= 0 && currentTarget && items[activeIndex]) {
+      e.preventDefault();
+      currentTarget.textContent = items[activeIndex].textContent;
+      autocompleteBox.style.display = 'none';
+      activeIndex = -1;
+    }
+  } else if (e.key === 'Escape') {
+    autocompleteBox.style.display = 'none';
+    activeIndex = -1;
+  }
+});
+
+function updateActiveItem(items) {
+  items.forEach((item, i) => {
+    item.style.background = i === activeIndex ? '#ddd' : '';
+  });
+}
+
+function showAutocomplete(matches, target) {
+  currentTarget = target;
+  activeIndex = -1;
+  if (matches.length === 0) {
+    autocompleteBox.style.display = 'none';
+    return;
+  }
+
+  autocompleteBox.innerHTML = '';
+  matches.forEach(match => {
+    const li = document.createElement('li');
+    li.textContent = match;
+    li.onclick = () => {
+      target.textContent = match;
+      autocompleteBox.style.display = 'none';
+    };
+    autocompleteBox.appendChild(li);
+  });
+
+  const rect = target.getBoundingClientRect();
+  autocompleteBox.style.left = `${rect.left + window.scrollX}px`;
+  autocompleteBox.style.top = `${rect.bottom + window.scrollY}px`;
+  autocompleteBox.style.display = 'block';
+}
+window.addEventListener('load', () => {
+  const hasText = [...document.querySelectorAll('td div[contenteditable]')]
+    .some(div => div.textContent.trim().length > 0);
+
+  if (!hasText) {
+    pastInputs.clear();
+    localStorage.removeItem('schedulaHistory');
+  }
+});
