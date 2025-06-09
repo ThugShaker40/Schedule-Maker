@@ -248,3 +248,27 @@
   background: #f9f9f9;
   font-size: 14px;
 }
+
+.autocomplete {
+  position: absolute;
+  z-index: 9999;
+  background: white;
+  border: 1px solid #aaa;
+  list-style: none;
+  padding: 5px;
+  margin: 0;
+  font-size: 14px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  max-height: 100px;
+  overflow-y: auto;
+  border-radius: 4px;
+}
+
+.autocomplete li {
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.autocomplete li:hover {
+  background-color: #eee;
+}
