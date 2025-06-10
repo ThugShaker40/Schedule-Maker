@@ -272,3 +272,38 @@
 .autocomplete li:hover {
   background-color: #eee;
 }
+
+.faq-button {
+  margin-left: 15px;
+  font-size: 14px;
+  text-decoration: none;
+  color: #333;
+  background: #eee;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background 0.2s;
+}
+
+.faq-button:hover {
+  background: #ddd;
+}
+
+.logo-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .logo-title-wrapper {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .faq-button {
+    margin-top: 5px;
+    margin-left: 0;
+  }
+}
