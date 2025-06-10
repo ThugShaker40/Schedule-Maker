@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ – Schedula</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 40px 20px;
+      color: #222;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .faq-container {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .faq-column {
+      flex: 1 1 400px;
+    }
+
+    .faq-item {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+
+    .faq-question {
+      padding: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .faq-question::after {
+      content: "+";
+      position: absolute;
+      right: 20px;
+      font-size: 18px;
+    }
+
+    .faq-item.active .faq-question::after {
+      content: "−";
+    }
+
+    .faq-answer {
+      padding: 0 16px 16px;
+      display: none;
+      font-weight: normal;
+    }
+
+    .faq-item.active .faq-answer {
+      display: block;
+    }
+    .back-button {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        font-size: 14px;
+        text-decoration: none;
+        color: #333;
+        background: #eee;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-weight: bold;
+        transition: background 0.2s;
+    }
+    .back-button:hover {
+        background: #ddd;
+        }
+</style>
+</head>
+<body>
+<a href="schedule.html" class="back-button">← Back</a>
+<div id="google_translate_element" style="position: absolute; top: 20px; right: 20px; z-index: 999;"></div>
+  <h1>Frequently Asked Questions</h1>
+
+  <div class="faq-container">
+    <div class="faq-column">
+      <div class="faq-item">
+        <div class="faq-question">Why do I need to retype long activities?</div>
+        <div class="faq-answer">Each time slot is independent for flexibility. We suggest using copy/paste or predictive fill to speed up repeating entries.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Can I assign colors to my schedule?</div>
+        <div class="faq-answer">Yes! You can manually drag color swatches into cells. While it's not automatic, it helps visually separate activity types.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">How do I repeat weekly or daily tasks?</div>
+        <div class="faq-answer">We support autofill using your typing history. As you reuse entries, suggestions will appear to speed up filling similar tasks.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Can input be faster for frequent items?</div>
+        <div class="faq-answer">Yes! As you type, the app suggests previous phrases. You can navigate them with your keyboard and auto-complete.</div>
+      </div>
+    </div>
+
+    <div class="faq-column">
+      <div class="faq-item">
+        <div class="faq-question">The mobile view scrolls sideways. Why?</div>
+        <div class="faq-answer">We're actively improving mobile layout. For now, try landscape mode or zoom out to view more columns at once.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Will the site send me reminders?</div>
+        <div class="faq-answer">To keep the site private and offline, we don’t use notifications. We recommend printing your schedule or using personal alarms.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Can I get alerts for upcoming tasks?</div>
+        <div class="faq-answer">Alerts usually require a backend or account system. Since our site avoids accounts, reminders aren't supported for now.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Is it possible to view previous schedules?</div>
+        <div class="faq-answer">Not currently. This site saves only to your browser, so there’s no cloud history. You can save schedules as images or PDFs.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.faq-question').forEach(q => {
+      q.addEventListener('click', () => {
+        const item = q.parentElement;
+        item.classList.toggle('active');
+      });
+    });
+  </script>
+  <script type="text/javascript">
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+      pageLanguage: 'en',
+      includedLanguages: 'en,id,ar',
+      layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+    }, 'google_translate_element');
+  }
+  </script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>
